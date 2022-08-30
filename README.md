@@ -35,3 +35,5 @@
     - `# git commit -m "new readme file"`
     - `# git push origin master`
         - 가끔 ` ! [rejected]        master -> master (fetch first)`라는 오류가 뜰 때도 있는데, 그럴 때는  `master` 대신에 `+master`를 넣어주면 되더군요.
+
+git pull을 위해 파일을 조금 수정해보았다. < - 나중에 지울 것
