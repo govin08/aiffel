@@ -1,0 +1,14 @@
+\beamer@sectionintoc {1}{Parameters and Hyperparameters}{3}{0}{1}
+\beamer@subsectionintoc {1}{1}{Parameters}{4}{0}{1}
+\beamer@subsectionintoc {1}{2}{Hyperparameters}{7}{0}{1}
+\beamer@sectionintoc {2}{Four elementary tuning methods}{12}{0}{2}
+\beamer@subsectionintoc {2}{1}{Manual Tuning}{13}{0}{2}
+\beamer@subsectionintoc {2}{2}{Grid Search}{15}{0}{2}
+\beamer@subsectionintoc {2}{3}{Random Search}{19}{0}{2}
+\beamer@subsectionintoc {2}{4}{Bayesian Optimization}{23}{0}{2}
+\beamer@sectionintoc {3}{An Overview of Bayesian Optimizaiton[3, 5]}{24}{0}{3}
+\beamer@subsectionintoc {3}{1}{An Overview of Bayesian Optimizaiton}{25}{0}{3}
+\beamer@sectionintoc {4}{A Few Elements of Bayesian Optimization[5]}{29}{0}{4}
+\beamer@subsectionintoc {4}{1}{Priors}{30}{0}{4}
+\beamer@subsectionintoc {4}{2}{Covariance Function}{33}{0}{4}
+\beamer@subsectionintoc {4}{3}{Acquisition Function}{35}{0}{4}

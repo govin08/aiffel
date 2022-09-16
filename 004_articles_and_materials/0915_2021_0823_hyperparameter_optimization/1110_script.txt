@@ -1,0 +1,211 @@
+1
+안녕하세요. 수학과 대학원생 김선중입니다.
+제가 중간발표로 선정한 주제는 hyperparameter tuning입니다.
+그 중에서도 hyperparameter를 조정하는 기본적인 방법들에 대해 준비했기 때문에 제목에 이렇게 elementary hyperparameter tuning이라고 적어보았습니다.
+
+2
+목차입니다.
+전체 발표를 세 개의 section으로 나누어보았는데요.
+
+먼저 hyperparameter의 정의에 대해 써보았습니다.
+이를 위해 parameter를 먼저 설명하고, 그 다음으로 hyperparameter에 대해 설명했습니다.
+
+두번째로 가장 기본적인 tuning 방법에 대해 조사하고, 적어봤는데요. 누구나 생각해낼 수 있는 간단한 방법인 manual tuning과 grid search부터 시작해서, hyperparameter들의 확률분포를 고려해서 tuning하는 random search와 bayesian optimization에 대해 다루었습니다.
+
+세번째 부분에서 하려고 했던 것은 두 개의 논문들에 대한 조사인데요. 아쉽게도 section 2까지 내용을 작성하고 나니 시간이 더 허락하지 않아서, 세번째 section은 목차에만 이렇게 적고, 더이상 준비하지는 못했습니다.
+이들에 관해서는 다음 기말 발표때 자세하게 다뤄보도록 하겠습니다.
+
+3
+첫번째 section인 parameter와 hyperparameter에 대한 정의에 대한 부분입니다.
+
+4
+설명을 위해, 간단한 neural network에 대해 생각해보았습니다.
+layer가 두 개밖에 없는 multi-layer perceptron인데요.
+input과 output은 세 개의 node들로 구성되어 있고, 각각의 node들은 한 개의 실수를 의미합니다.
+따라서 이것을 R3에서 R3로 가는 함수 f라고 생각할 수 있습니다.
+
+hidden layer의 node 개수가 4개라고 하면 이 함수를 계산하는 데에는 두 개의 weight matrix와 두 개의 bias vector가 필요합니다.
+한편, activation function은 sigmoid라고 가정하겠습니다.
+그러면 함수 f의 계산식은 다음과 같이 explicit하게 표현될 수 있습니다.
+
+5
+그리고 나서, 총 N개의 data가 있는 dataset을 생각해봤습니다. 이때 cost C는 다음과 같이 L2 norm의 제곱의 합을 통해 계산될 수 있습니다.
+
+한편, weight matrix들과 bias들을 묶어서 large theta라고 적으면, large theta는 31차원의 벡터라고 볼 수 있습니다.
+이 Theta가 결정되면 그에 따라서 f가 결정됩니다.
+그런데 또, C는 f에 의존하여 변하는 값이기 때문에, 결국 dataset D가 주어졌을 때, C는 theta에 대한 함수라고 볼 수 있습니다.
+아까 theta는 31차원의 벡터라고 했었기 때문에, 우리는 C를 R31에서 R1으로 가는 함수라고 생각할 수 있습니다.
+
+6
+그러면 gradient descent나 혹은 비슷한 것들을 통해 C(theta)의 최솟값을 찾을 수 있을 겁니다.
+또한 C(theta)를 최소가 되도록 만드는 theta값 \Theta\star라고 하면 이 \Theta\star를 가지고 우리가 원하는 학습된 함수 f\star를 구해낼 수 있습니다.
+이때, W, b, W', b'의 성분들을 learnable parameter 혹은 parameter라고 부릅니다.
+
+7
+hyperparameter는 앞서 말씀드린 parameter와는 조금 다릅니다.
+모델의 architectur는 그대로 두고, 즉 모델이 2-layer perceptron이라는 사실은 바꾸지 않은 상태에서, 모델의 구조를 조금 바꾸어서 더 괜찮은 성능이 나오도록 할 수 있습니다.
+예를 들어, 아까는 hidden layer의 node의 개수가 4개였는데 이것을 5개로 늘려볼 수 있습니다.
+이렇게 hidden layer의 node의 개수를 늘리면 일반적으로 성능은 조금 더 좋아질 것인데요.
+이때 저희가 변화시킨 값, 즉 hidden layer의 node의 개수를 hyperparameter라고 합니다.
+
+8
+hidden node 개수 말고도 learning rate이라든지, optimizer 종류를 바꿔볼 수도 있을 겁니다.
+따라서 이것들도 hyperparameter의 한 예가 될 것입니다.
+이것을 수학적으로는 다음과 같이 표현할 수 있을 것 같습니다.
+phi_1, phi_2, phi_3를 argument로 갖는 어떤 operator F를 생각한다고 볼 수 있습니다.
+phi_i들이 결정되면 하나의 함수가 결정되는 그러한 형식입니다.
+
+9
+이러한 phi_i들이 일정한 집합 안에서만 값을 가진다고 가정해보겠습니다.
+왜냐하면 phi_1은 아까 learning rate으로 정했었는데, 이 값은 1보다 아주 작은 양수 값으로 두기 때문에, 이 값을 실수 전체에서 고려할 필요가 없습니다.
+그리고, phi_2는 hidden node의 개수였는데 이것은 당연히 자연수의 값만 가질 수 있습니다.
+따라서 phi_i들이 특정한 집합 S_i에 속한다고 가정할 수 있습니다.
+
+한편, 우리는 이 phi_i들을 하나의 random variable로 볼 수도 있습니다.
+물론, 어떤 확률분포를 따르는 지는 아직 특정되지 않은 상태입니다.
+굳이 이렇게까지 이야기하는 이유는, 나중에 random search와 bayesian optimzation을 설명할 때 필요하기 때문에 그렇습니다.
+또한 그때 가서 관련된 notation들이 필요하기 때문에 여기에서 정의해놓으려고 합니다.
+
+한가지 관찰할 만한 점은 hyperparameter가 가질 수 있는 값은 숫자일 수도 있고 아닐 수도 있다는 점입니다.
+또한 S_1에서처럼 continuous random variable을 생각할 수도 있고 S_2, S_3에서처럼 discrete한 경우를 생각할 수도 있을 겁니다.
+
+10
+어쨌든, phi_i들이 주어지게 된다면 그에 대응되는 함수 f가 정의될 것이고, 또 그에 따른 cost값 C(\theta\star)가 정해질 것입니다.
+물론 이 때에 C(\theta\star)는 gradient descent의 확률적인 성질 때문에 유일하게 결정되지는 않습니다.
+그래서 large phi가 하나 주어졌을 때 그에 따른 optimal cost값이 결정되는 함수로 보기는 애매하지만, 어쨌든 저희가 하고 싶은 일은 optimal cost값이 최소가 되는 가장 괜찮은 Phi값을 찾는 것입니다.
+그래서 일종의 optimization 문제라고도 볼 수 있겠습니다.
+이와 같이 Phi를 결정하는 작업을 'hyperparameter tuning' 혹은 'hyperparameter optimization', 'hyperparameter selection' 등으로 부릅니다.
+
+11
+아까 예에서 우리는 세 개의 hyperparameter에 대해서만 언급해보았는데, 그 외에도 여러 개의 hyperparameter들이 있을 것입니다.
+예를 들어 minibatch의 크기, epoch의 개수, activation function의 종류, weight initialization의 종류, dropout parameter, regularization parameter 같은 값들은 모두 hyperparameter가 될 수 있습니다.
+
+12
+그러면 두 번째 section으로 넘어가서 가장 기본적인 네 개의 tuning method에 대해 이야기하겠습니다.
+
+13
+첫번째로, manual tuning입니다. 이것은 우리가 직접 손으로 tuning하는 방법입니다.
+예를 들어, 한 개의 hyperparameter tuple에서 phi_2와 phi_2는 고정한 채로 phi_1만 조금 움직여보면서 이 모델의 성능을 측정할 수 있습니다.
+그렇게 phi_1의 값을 적당히 정해놓고, 또 이번에는 phi_2를 움직여볼 수 있습니다.
+이러한 식으로, hyperpameter tuple을 적당히 조절해가면서 tuning하는 방법이 manual tuning 입니다.
+
+14
+이 manual tuning은 당연히 아주 좋은 방법은 아닙니다.
+어떤 일반적인 법칙에 따라서 하는 것이 아니고, 순전히 감으로, 어떤 점에서 다른 점으로 옮겨가면서 성능을 측정하는 방법이라서 수동적인 작업이 필요하다는 단점도 있습니다.
+하지만, manual tuning에도 장점은 있습니다.
+우리가 직접 hyperparameter를 조정하는 것이기 때문에 각각의 hyperparameter들이 모델의 성능에 어떻게 영향을 미치고 있는지 느낄 수 있을 겁니다.
+또한 가장 기본적인 방법이니 만큼, 누구나 tuning을 할 때에는 처음에 이러한 manual tuning을 한 번은 하게 될 겁니다.
+
+15
+다음으로 grid search 방법입니다.
+설명을 간단히 하기 위해, 두 개의 hyperparameter phi_2와 phi_3만 tuning하는 것을 생각해봅시다.
+그러면 phi_2와 phi_3가 가질 수 있는 값은 각각 6개, 3개이므로 가능한 hyperparameter의 조합은 18개입니다.
+이 18개의 경우마다 성능을 평가해서 가장 좋은 성능을 내는 때를 찾아내는 방법입니다.
+
+이것을 그림으로 표현하면, 2차원 공간에 grid를 통해서 표현할 수 있으므로, 이 방법을 grid search 방법이라고 부릅니다.
+
+16
+만약 세 개의 hyperparameter를 동시에 tuning하게 되면, 우리는 삼차원 공간 내의 grid를 생각하면 될겁니다.
+하지만 phi_1의 경우, closed interval 안에 위치한 값입니다.
+즉 S_1이 무한집합입니다.
+따라서 이 집합 S_1을 유한집합으로 만들어줄 필요가 있습니다.
+대표적으로 세 개의 값 0.001, 0.005, 0.01만 가질 수 있다고 가정하면, 우리는 3x6x3=54가지의 경우를 고려하면 된다는 것을 알 수 있습니다.
+이 54가지의 경우에 대해서 cost를 계산하고 그 결과를 비교하면, 가장 좋은 조합의 hyperparameter들을 구해낼 수 있을 겁니다.
+
+17
+이러한 grid search의 방법은, 우리가 설정한 모든 가능성을 다 cover할 수 있다는 장점이 있습니다.
+물론 이것은, 우리가 '설정한' 값들에 대해서만 다 고려할 수 있다는 말이기 때문에 정말로 가능한 모든 경우의 수를 다 고려하는 것은 아닙니다.
+또한 grid search의 심각한 단점으로는, 시간이 굉장히 많이 걸릴 수 있다는 것입니다.
+지금 우리 예시의 경우에는 세 종류의 hyperparameter밖에 고려하지 않았지만, 종류가 많아질수록 걸리는 시간은 지수함수적으로 증가한다는 점에서 hyperparameter의 개수가 많아지면 실질적으로는 이 방법을 사용하는 것에 한계가 있습니다.
+
+18
+이번에는 grid search에 대한 코드를 준비해봤습니다.
+scikitlearn의 GridSearchCV라는 함수를 이용하면, 꽤 손쉽게 grid search를 구현해낼 수 있습니다.
+
+이 코드에서 사용한 dataset은 수중 음파 탐지기를 가지고 해저를 탐사하는 것으로부터 비롯된 dataset인데요.
+음파, 즉 sonar의 여러가지 feature들을 가지고 앞에 놓여있는 것이 바위인지, 아니면 지뢰인지 분류하는 classification 문제입니다.
+모델로는 logistic regression을 활용했습니다.
+
+dictionary 형태의 space라는 것을 지정해서 세 개의 hyperparameter가 가질 수 있는 값들을 나열했습니다.
+그래서 아까 만들어놓은 model과 space를 GridSearchCV라는 함수에 넣으면 grid search가 실제로 실행됩니다.
+여기서 cv의 의미는 cross validation, 즉 교차검증이라는 뜻입니다.
+이 코드에는 10개로 나누어 3번의 반복을 통해 교차검증을 하고 있습니다.
+이렇게 함으로써 조금 더 정확한 accuracy 값을 얻어내려고 하고 있습니다.
+
+이 코드에서 고려하고있는 hyperparameter는 solver, penalty, C 입니다.
+여기서 solver는 optimization algorithm의 종류를 의미하고, penalty는 regularization의 형태를 의미합니다.
+한편 C value는 regularization strength를 의미한다고 합니다.
+
+그 결과로, 우리는 newton cg방법을 사용하고, 또한 C=1로 두어 L2 regularization을 하는 것이 가장 좋은 성능을 낸다는 것을 확인할 수 있습니다.
+
+19
+세 번째로 random search 방법입니다.
+
+아까 phi_i들을 각각 확률변수로 생각할 수 있다고 했었습니다.
+phi_i들의 확률분포를 uniform하게건 혹은 normal하게건 특정한 확률 분포로 지정하고 나면, 그 결과로 large phi의 joint distribution도 얻어낼 수 있습니다.
+이 joint distribution에서 sampling을 해가면서 각각의 hyperparameter tuple에 대한 성능을 기록합니다.
+원하는 만큼 sampling과 기록을 하고 나서 가장 좋은 성능을 기록한 hyperparameter의 조합을 얻어내는 방법이 이 random search 방법입니다.
+
+20
+random search의 방법을 사용하면, 특히 grid search와 비교했을 때, 예기치 못한 곳에서 괜찮은 hyperparameter를 얻을 수 있을 것입니다.
+또한, 성능을 향상시키고 싶을 때, 단순히 sampling 개수를 늘리면 된다는 장점도 있을 것입니다.
+
+하지만, 단점도 있습니다.
+만약 hyperparameter space의 크기가 너무 크면, sampling의 개수가 일정 수준 이상이 된다고 하더라도 random search를 통해 hyperparameter space 다 탐사하지 못할 수 있을 겁니다.
+또한, sample space의 probability distribution을 어느 정도 특정한 이후에 사용할 수 있다는 점도 있습니다.
+
+21
+random search에 대한 코드도 준비해봤습니다.
+아까와 같은 dataset과 model을 사용했고, 아까 GridSearchCV 함수를 사용한 데 비해 이번에는 RandomizedSearchCV 함수를 사용했습니다.
+
+model과 space를 설정하고 cross validation을 설정하는 부분은 동일하고, 또한 hyperparameter도 같은 종류의 hyperparameter들을 사용했습니다.
+다만, 'number of iteration'을 지정하는 부분이 추가되었습니다.
+이 값을 통해 몇 번만큼 sampling할 지 결정하게 됩니다.
+
+그 결과, 아까와 마찬가지로 newton cg의 방법과 L2 regularization을 사용하는 것이 가장 좋다는 결과를 얻었습니다.
+C값은 4.878정도의 값을 얻었는데요.
+아까 얻었던 C=1와는 조금 다른 값을 얻었습니다.
+그런데, 그럴 수밖에 없었던 것이, 아까 grid search에서 C값을 추정할 때에는 10배의 간격을 두고 C값의 후보들을 설정했었습니다.
+C가 0.1과 1과 10의 값을 취할 수 있는데 그중에서는 C=1일 때가 optimal하다는 것이지요.
+
+22
+그래서 grid search를 다시 적용해, C의 값을 소수점 둘째짜리까지 다시 추정해봤습니다.
+이 때, 다른 hyperparameter는 고려하지 않고 C만 hyperparameter로 두고 실험했습니다.
+
+그 결과 소수점 둘째자리까지, 기존에 random search로 얻은 결과와 같은 결과가 얻어진다는 사실을 확인했습니다.
+sample의 개수가 208개밖에 되지 않기 때문에 accuracy도 정확하게 일치하는 모습을 보였습니다.
+두 optimal model이 정확히 서로 같은 예측값을 내는지 여부는 확인하지 못했지만, 어쨌든 같은 hyperparameter set을 얻어낸다는 사실은 확인했습니다.
+
+한편 tuning하는 데 걸린 시간을 확인해보면, random search에서 더 많은 시간이 들었습니다.
+전체 시간을 비교해보면 약 두 배 정도의 차이가 납니다.
+하지만 grid method의 경우 세 번 정도나 model에 개입했어야 했었고 그 결과로 C의 값을 제한된 정도까지만 추정할 수 있었습니다.
+따라서 이 문제의 경우에는 random search의 방법이 grid search의 방법보다 더 괜찮다고 말할 수 있을 것 같습니다.
+
+23
+네 번째로 bayesian optimization 방법입니다.
+아까 random search의 한 가지 단점으로, sample space의 확률분포를 미리 설정해야 한다는 부담이 있다고 했습니다.
+bayesian의 방법에서는 일단 하나의 확률분포를 생각하고, 거기에서 조금씩 확률분포를 발전시켜서, random sampling하기 좋은 확률분포로 나아가는 방법입니다.
+
+하지만 이번 발표에서는 이에 관한 상세한 설명은 하지 않고, 다음 발표때 자세한 설명과 함께 코드를 제시하는 것으로 하겠습니다.
+간략하게만 설명하면 prior라고 불리는 기존의 distribution을 가지고, likelihood와 bayes rule을 활용하여 posterior를 얻어냅니다.
+식으로 쓰면 이와 같은 식을 생각할 수 있습니다.
+
+24
+마지막 섹션으로 두 개의 논문들에 대한 survey를 준비하려 했습니다.
+하지만 처음에 말씀드렸던대로, 실제로 이 부분을 준비하지는 못했습니다.
+이에 관해서는 다음 발표에서 다뤄보도록 하겠고, 이번 발표에서는 어떤 논문들을 다룰 예정인지만 언급하겠습니다.
+
+25
+첫번째 논문은 "Algorithm for hyper-parameter optimzation"이라는 논문으로 Bergstra 등의 연구자들이 2011년에 발표한 논문입니다.
+여기에 주저자로 나타나지는 않았지만, 유명한 Yoshua Bengio가 연구에 참여했습니다.
+또한 2052회 정도 인용된 논문으로, 매우 중요한 논문이라는 예상 하에 이 논문을 선택하게 되었습니다.
+
+첫 논문으로 과거의 논문을 선택한 만큼 두번째 논문은 최신 논문을 선택하려 했습니다.
+다만, 2019년, 2020년에 나오는 hyperparameter에 관한 논문들은 주로 reinforcement learning의 특정한 model에 관계되는 논문이 많았습니다.
+일반적인 논문을 survey 싶어서 여러 번의 검색을 하다가 "Optuna: A Next-generation Hyperparameter Optimization Framework" 이라는 2019년 논문을 찾았습니다.
+인용 횟수는 130회 정도로, 나름대로 중요한 논문이라고 판단했습니다.
+
+따라서 다음 발표에서는 아까 언급한 bayesian optimization의 방법과 두 논문에 대해 조사하는 내용으로 채워보겠습니다.
+
+26
+제가 준비한 내용은 여기까지입니다. 감사합니다.

@@ -1,0 +1,8 @@
+\BOOKMARK [2][]{Outline0.1}{References}{}% 1
+\BOOKMARK [2][]{Outline0.2}{Brief History of Bayesian Optimzation[3, 5]}{}% 2
+\BOOKMARK [2][]{Outline0.3}{An Overview of Bayesian Optimizaiton[3, 5]}{}% 3
+\BOOKMARK [3][]{Outline0.3.1.14}{An Overview of Bayesian Optimizaiton}{Outline0.3}% 4
+\BOOKMARK [2][]{Outline0.4}{A Few Elements of Bayesian Optimization[5]}{}% 5
+\BOOKMARK [3][]{Outline0.4.1.19}{Priors}{Outline0.4}% 6
+\BOOKMARK [3][]{Outline0.4.2.22}{Covariance Function}{Outline0.4}% 7
+\BOOKMARK [3][]{Outline0.4.3.24}{Acquisition Function}{Outline0.4}% 8
