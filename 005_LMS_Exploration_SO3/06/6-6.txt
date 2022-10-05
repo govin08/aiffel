@@ -1,0 +1,8 @@
+<start>	before	we	proceed	any	further	,	hear	me	speak	.	<end>
+2	143	40	933	140	591	4	124	24	110	5	3
+
+<start>	speak	,	speak	.	<end>
+2	110	4	110	5	3
+
+<start>	you	are	all	resolved	rather	to	die	than	to	famish	?	<end>
+2	11	50	43	1201	316	9	201	74	9	3034	15	3
