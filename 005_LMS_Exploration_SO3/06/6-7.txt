@@ -1,0 +1,8 @@
+<start>	how	does	a	bastard	,	orphan	,	son	of	a	whore	<end>
+2	78	626	9	4376	4	5629	4	611	19	9	3293	3	0	0
+
+<start>	and	a	scotsman		,	dropped	in	the	middle	of	a	forgotten	spot	in	the	caribbean	by	providence	impoverished	,	<end>
+2	8	9	1	4	1372	14	6	881	19	9	1974	808	14	6
+
+<start>	in	squalor	,	grow	up	to	be	a	hero	and	a	scholar		?	the	ten	dollar	founding	father	without	a	father		<end>
+2	14	1	4	831	29	10	27	9	2040	8	9	1	43	6
